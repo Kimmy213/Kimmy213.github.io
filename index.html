@@ -5,9 +5,13 @@
     <script>
         function calculateVAT() {
             var grossPrice = parseFloat(document.getElementById("grossPrice").value);
+            var discont = parseFloat(document.getElementById("discont").value);
             var vatRate = 0.07; // 7% VAT rate
             var vatAmount = grossPrice * vatRate;
+            var total = grossPrice - vatAmount - discont;
             document.getElementById("vatAmount").textContent = vatAmount.toFixed(2);
+            document.getElementById("total").textContent = total.toFixed(2);
+            document.getElementById("discont").textContent = total.toFixed(2);
         }
     </script>
 </head>
@@ -15,9 +19,22 @@
     <h1>VAT Calculator</h1>
     <label for="grossPrice">Gross Price:</label>
     <input type="text" id="grossPrice">
+   
+    <br>
+    <label for="discont">Discont:</label>
+    <input type="text" id="discont">
     <button onclick="calculateVAT()">Calculate</button>
+
     <br>
     <label for="vatAmount">VAT Amount:</label>
     <span id="vatAmount"></span>
+
+    <br>
+    <label for="discont">Discont Amount:</label>
+    <span id="discont"></span>
+
+    <br>
+    <label for="total">Total Amount:</label>
+    <span id="total"></span>
 </body>
 </html>
