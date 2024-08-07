@@ -1,123 +1,127 @@
-import { useState, useRef } from 'react'
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import Container from 'react-bootstrap/Container';
-import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
-import DataTable from './components/DataTable'
-import productList from './accessory-products.json'
-import 'bootstrap-icons/font/bootstrap-icons.css';
+import { useState, useRef } from "react";
+import { Container, Row, Col, Button, Form } from "react-bootstrap";
+import QuotationTable from "./QuotationTable";
+
+const products = [
+  { code: "p001", name: "Product A", price: 100 },
+  { code: "p002", name: "Product B", price: 200 },
+  { code: "p003", name: "Product C", price: 150 },
+  { code: "p004", name: "Product D", price: 250 },
+];
 
 function App() {
-  const productRef = useRef()
-  const quantityRef = useRef()
+  const itemRef = useRef();
+  const ppuRef = useRef();
+  const qtyRef = useRef();
+  const discountRef = useRef();
 
-  const [price, setPrice] = useState(productList[0].price)
-  const [selectedItems, setSelectedItems] = useState([])
-  const [filteredItems, setFilteredItems] = useState([])
+  const [dataItems, setDataItems] = useState([]);
+  const [ppu, setPpu] = useState(products[0].price);
+  const [discount, setDiscount] = useState(0);
 
-  const deleteItemByIndex = (index) => {
-    selectedItems.splice(index, 1)
-    setSelectedItems([...selectedItems])
-    setFilteredItems([...selectedItems])
+  const addItem = () => {
+    let item = products.find((v) => itemRef.current.value === v.code);
+
+    const newItem = {
+      item: item.name,
+      ppu: parseFloat(ppuRef.current.value), // Ensure ppu is a number
+      qty: parseInt(qtyRef.current.value, 10), // Ensure qty is a number
+      discount: parseFloat(discountRef.current.value) || 0, // Ensure discount is a number
+
+    };
+
+    const existingItemIndex = dataItems.findIndex(
+      (v) =>
+        v.item === newItem.item &&
+        v.ppu === newItem.ppu &&
+        v.discount === newItem.discount
+    );
     
-  }
-  
-  const filter = (keyword) => {
-    const filteredItems = selectedItems.filter(item => item.name.includes(keyword))
-    setFilteredItems(filteredItems)
-  }
 
-  const Sort = (order) => {  
-    const sortedItems = [...filteredItems].sort((a, b) => {  
-      if (order === 'asc') {  
-        return a.name.localeCompare(b.name); 
-      } else {  
-        return b.name.localeCompare(a.name)
-      }  
-    })  
-    setFilteredItems(sortedItems)
-  }
-  
-  
+    if (existingItemIndex >= 0) {
+      const updatedItems = [...dataItems];
+      updatedItems[existingItemIndex].qty += newItem.qty;
+      setDataItems(updatedItems);
+    } else 
 
-  const handleSelect = (e) => {
-    const pid = parseInt(productRef.current.value)
-    const product = productList.find(p => p.id === pid)
-    console.table(product)
+    setDataItems([...dataItems, newItem]);
+  };
 
-    setPrice(product.price)
-  }
+  const clearDataItems = () => {
+    setDataItems([]);
+  };
 
-  const handleAdd = (e) => {
-    const pid = parseInt(productRef.current.value)
-    console.log(typeof pid)
-    const product = productList.find(p => p.id === pid)
-    const q = quantityRef.current.value
-    // console.log(pid, q)
-    // console.table(product)
+  const deleteByIndex = (index) => {
+    let newDataItems = [...dataItems];
+    newDataItems.splice(index, 1);
+    setDataItems(newDataItems);
+  };
 
-    selectedItems.push({
-      // id: product.id,
-      // name: product.name,
-      // price: product.price,
-      ...product,
-      quantity: q
-    })
-
-    setSelectedItems([...selectedItems])
-    setFilteredItems([...selectedItems])
-
-    console.table(selectedItems)
-  }
+  const productChange = () => {
+    let item = products.find((v) => itemRef.current.value === v.code);
+    setPpu(item.price);
+  };
 
   return (
-    <>
-      <Container>
-        <Row>
-          <Col xs={6}>
-            <Form.Label htmlFor="inputProductName">Product Name</Form.Label>
-            <Form.Select
-              id="inputProductName"
-              ref={productRef}
-              onChange={handleSelect}>
-              {
-                productList.map(product => (
-                  <option key={product.id} value={product.id}>{product.name}</option>
-                ))
-              }
-            </Form.Select>
-
-            <Form.Label htmlFor="inputPrice">Price</Form.Label>
-            <Form.Control type="number"
-              id="inputPrice"
-              readOnly
-              value={price}
-            />
-
-            <Form.Label htmlFor="inputQuantity">Quantity</Form.Label>
-            <Form.Control
-              type="number"
-              id="inputQuantity"
-              aria-describedby="Quantity"
-              defaultValue={1}
-              ref={quantityRef}
-            />
-
-            <Button variant="success" onClick={handleAdd}>Add</Button>
-          </Col>
-          <Col>
-            <DataTable 
-              data={filteredItems} 
-              onDelete={deleteItemByIndex}
-              onSearch={filter}
-              onSort={Sort}
-            />
-          </Col>
-        </Row>
-      </Container>
-    </>
-  )
+    <Container>
+      <Row>
+        <Col md={4} style={{ backgroundColor: "#e4e4e4" }}>
+          <Row>
+            <Col>
+              Item
+              <Form.Select ref={itemRef} onChange={productChange}>
+                {products.map((p) => (
+                  <option key={p.code} value={p.code}>
+                    {p.name}
+                  </option>
+                ))}
+              </Form.Select>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <Form.Label>Price Per Unit</Form.Label>
+              <Form.Control
+                type="number"
+                ref={ppuRef}
+                value={ppu}
+                onChange={(e) => setPpu(ppuRef.current.value)}
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <Form.Label>Quantity</Form.Label>
+              <Form.Control type="number" ref={qtyRef} defaultValue={1} />
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <Form.Label>Discount</Form.Label>
+              <Form.Control
+                type="number"
+                ref={discountRef}
+                defaultValue={0}
+              />
+            </Col>
+          </Row>
+          <hr />
+          <div className="d-grid gap-2">
+            <Button variant="primary" onClick={addItem}>
+              Add
+            </Button>
+          </div>
+        </Col>
+        <Col md={8}>
+          <QuotationTable
+            data={dataItems}
+            clearDataItems={clearDataItems}
+            deleteByIndex={deleteByIndex}
+          />
+        </Col>
+      </Row>
+    </Container>
+  );
 }
 
-export default App
+export default App;

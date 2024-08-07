@@ -1,8 +1,19 @@
-# React + Vite
+# WAD 2024 Midterm Skeleton Code
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the skeleton code for the WAD Midterm. Get the project code using one of these methods:
+1. **Git Clone:** Unfortunately, we have not covered this in the class yet.
+2. **Download:** Download the zip file and extract it.
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+# Setup
+1. Change directory to the project folder
+```bash
+cd wad-midterm-skeleton
+```
+2. Install dependencies
+```bash
+pnpm install
+```
+3. Start the development server
+```bash
+pnpm run dev
+```
