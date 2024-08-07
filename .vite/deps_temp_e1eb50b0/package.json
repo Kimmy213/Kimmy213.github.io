@@ -1,3 +1,11 @@
 {
-  "type": "module"
+  "name": "vite-project",
+  "version": "0.0.0",
+  "homepage": "https://username.github.io/vite-project/",
+  "scripts": {
+    "build": "vite build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
+  }
 }
+
